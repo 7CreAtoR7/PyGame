@@ -1,1 +1,1 @@
-
+print('game over')
