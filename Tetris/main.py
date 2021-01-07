@@ -1,6 +1,6 @@
 import pygame
 import sqlite3
-# test3
+# test
 
 
 class Board:
