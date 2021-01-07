@@ -1,6 +1,6 @@
 import pygame
 import sqlite3
-# bgfd
+
 
 class Board:
     def __init__(self, width, height):
@@ -11,10 +11,10 @@ class Board:
         self.cell_size = 39
 
     def on_click(self, x, y):
-        pass # TODO
+        pass  # TODO
 
     def render(self, screen):
-        pass # TODO
+        pass  # TODO
 
 
 if __name__ == '__main__':
