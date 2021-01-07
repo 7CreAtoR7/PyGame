@@ -1,4 +1,5 @@
 import pygame
+import sqlite3
 
 
 class Board:
@@ -16,27 +17,36 @@ class Board:
         pass # TODO
 
 
-board = Board(10, 20)
+if __name__ == '__main__':
+    con = sqlite3.connect('database.sqlite')
+    cur = con.cursor()
 
-pygame.init()
-pygame.display.set_caption('Тетрис')
-size = width, height = 600, 600
-screen = pygame.display.set_mode(size)
-clock = pygame.time.Clock()
-fps = 10
+    cur.execute("""CREATE TABLE IF NOT EXISTS Results (
+        nickname STRING PRIMARY KEY,
+        score INTEGER
+    )""")
 
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    board = Board(10, 20)
 
-        # TODO
+    pygame.init()
+    pygame.display.set_caption('Тетрис')
+    size = width, height = 600, 600
+    screen = pygame.display.set_mode(size)
+    clock = pygame.time.Clock()
+    fps = 10
 
-    screen.fill((0, 0, 0))
-    board.render(screen)
-    pygame.display.flip()
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-    clock.tick(fps)
+            # TODO
 
-pygame.quit()
+        screen.fill((0, 0, 0))
+        board.render(screen)
+        pygame.display.flip()
+
+        clock.tick(fps)
+
+    pygame.quit()
