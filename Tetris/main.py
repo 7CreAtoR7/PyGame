@@ -4,12 +4,12 @@ import sqlite3
 
 
 class Tetris:
-    def __init__(self, width, height):
+    def __init__(self, width, height, cell_size):
         self.width = width
         self.height = height
         self.board = [[0] * width for _ in range(height)]
         self.current_figure = (None, None)
-        self.cell_size = 30
+        self.cell_size = cell_size
         self.score = 0
 
     def add_figure(self, figure_type=None):
@@ -56,7 +56,6 @@ class Tetris:
             if all(self.board[-1]):
                 self.board[-1] = [0] * self.width
                 self.score += 100
-                print(self.score)
 
     def render(self, screen):
         screen.fill((0, 0, 0))
@@ -79,15 +78,15 @@ if __name__ == '__main__':
         score INTEGER
     )""")
 
-    tetris = Tetris(10, 20)
+    tetris = Tetris(10, 15, 30)
     tetris.add_figure()
 
     DEFAULT_SPEED = 10
-    INCREASED_SPEED = 40
+    INCREASED_SPEED = 50
 
     pygame.init()
     pygame.display.set_caption('Тетрис')
-    size = width, height = 300, 600
+    size = width, height = 300, 450
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
     fps = 15
