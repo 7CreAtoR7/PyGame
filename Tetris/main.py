@@ -8,19 +8,64 @@ class Tetris:
         self.height = height
         self.board = [[0] * width for _ in range(height)]
         self.current_figure = (None, None)
-        self.cell_size = 39
+        self.cell_size = 30
+        self.score = 0
 
-    def tick(self, screen):
+    def add_figure(self, figure_type=None):
+        self.current_figure = (0, 5)
+        self.board[0][5] = 1
+
+    def move_figure(self, direction='down'):
         row, col = self.current_figure
         if row is None:
-            pass  # TODO: generate new figure
+            return
+
+        if direction == 'down':
+            if row + 1 >= self.height:
+                return
+            self.current_figure = (row + 1, col)
+            self.board[row][col] = 0
+            self.board[row + 1][col] = 1
+        elif direction == 'left':
+            if col - 1 < 0:
+                return
+            self.current_figure = (row, col - 1)
+            self.board[row][col] = 0
+            self.board[row][col - 1] = 1
+        elif direction == 'right':
+            if col + 1 >= self.width:
+                return
+            self.current_figure = (row, col + 1)
+            self.board[row][col] = 0
+            self.board[row][col + 1] = 1
+
+    def tick(self):
+        row, col = self.current_figure
+        if row is None:
+            self.add_figure()
         else:
-            if self.board[row + 1][col]:
+            if row + 1 == self.height:
+                self.current_figure = (None, None)
+            elif self.board[row + 1][col]:
                 self.current_figure = (None, None)
             else:
-                self.current_figure = (row + 1, col)
-                self.board[row][col] = 0
-                self.board[row + 1][col] = 1
+                self.move_figure('down')
+
+            if all(self.board[-1]):
+                self.board[-1] = [0] * self.width
+                self.score += 100
+                print(self.score)
+
+    def render(self, screen):
+        screen.fill((0, 0, 0))
+        cell_size = self.cell_size
+        for row in range(self.height):
+            for col in range(self.width):
+                pygame.draw.rect(screen,
+                                 (255, 255, 255),
+                                 ((col * cell_size, row * cell_size),
+                                  (cell_size, cell_size)),
+                                 not bool(self.board[row][col]))
 
 
 if __name__ == '__main__':
@@ -32,27 +77,52 @@ if __name__ == '__main__':
         score INTEGER
     )""")
 
-    board = Tetris(10, 20)
+    tetris = Tetris(10, 20)
+    tetris.add_figure()
+
+    DEFAULT_SPEED = 10
+    INCREASED_SPEED = 40
 
     pygame.init()
     pygame.display.set_caption('Тетрис')
-    size = width, height = 390, 780
+    size = width, height = 300, 600
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
-    fps = 1
+    fps = 30
+    speed = DEFAULT_SPEED
+    current_tick = 0
+    current_key = None
 
     running = True
     while running:
+        clock.tick(fps)
+
+        current_tick += speed
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key in [97, 100, 115]:
+                    current_key = event.key
+            elif event.type == pygame.KEYUP:
+                if event.key in [97, 100, 115]:
+                    current_key = None
 
-            # TODO
+        if current_key == 115:  # pressed S
+            speed = INCREASED_SPEED
+        else:
+            speed = DEFAULT_SPEED
 
-        screen.fill((0, 0, 0))
-        board.render(screen)
+        if current_tick >= 100:
+            if current_key == 97:
+                tetris.move_figure('left')
+            elif current_key == 100:
+                tetris.move_figure('right')
+            tetris.tick()
+            current_tick = 0
+
+        tetris.render(screen)
         pygame.display.flip()
-
-        clock.tick(fps)
 
     pygame.quit()
