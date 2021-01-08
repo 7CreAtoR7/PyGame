@@ -1,4 +1,5 @@
 import pygame
+import random
 import sqlite3
 
 
@@ -12,8 +13,9 @@ class Tetris:
         self.score = 0
 
     def add_figure(self, figure_type=None):
-        self.current_figure = (0, 5)
-        self.board[0][5] = 1
+        col = random.randint(0, self.width - 1)
+        self.current_figure = (0, col)
+        self.board[0][col] = 1
 
     def move_figure(self, direction='down'):
         row, col = self.current_figure
@@ -27,13 +29,13 @@ class Tetris:
             self.board[row][col] = 0
             self.board[row + 1][col] = 1
         elif direction == 'left':
-            if col - 1 < 0:
+            if row + 1 == self.height or col - 1 < 0:
                 return
             self.current_figure = (row, col - 1)
             self.board[row][col] = 0
             self.board[row][col - 1] = 1
         elif direction == 'right':
-            if col + 1 >= self.width:
+            if row + 1 == self.height or col + 1 >= self.width:
                 return
             self.current_figure = (row, col + 1)
             self.board[row][col] = 0
@@ -88,7 +90,7 @@ if __name__ == '__main__':
     size = width, height = 300, 600
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
-    fps = 30
+    fps = 15
     speed = DEFAULT_SPEED
     current_tick = 0
     current_key = None
@@ -109,16 +111,16 @@ if __name__ == '__main__':
                 if event.key in [97, 100, 115]:
                     current_key = None
 
-        if current_key == 115:  # pressed S
+        if current_key == 97:
+            tetris.move_figure('left')
+        elif current_key == 100:
+            tetris.move_figure('right')
+        elif current_key == 115:  # pressed S
             speed = INCREASED_SPEED
         else:
             speed = DEFAULT_SPEED
 
-        if current_tick >= 100:
-            if current_key == 97:
-                tetris.move_figure('left')
-            elif current_key == 100:
-                tetris.move_figure('right')
+        if current_tick >= 50:
             tetris.tick()
             current_tick = 0
 
