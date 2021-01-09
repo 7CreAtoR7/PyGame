@@ -10,11 +10,7 @@ if __name__ == '__main__':
 
 
     def load_image(name):
-
-        # если программа не видит изображение, пропишите полный путь
-        # с двумя \\: C:\\Users\\iljal\\PycharmProjects\\main\\data
         fullname = os.path.join('data', name)
-
         # если файл не существует, то выходим
         if not os.path.isfile(fullname):
             print(f"Файл с изображением '{fullname}' не найден")
