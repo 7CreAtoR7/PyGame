@@ -93,6 +93,55 @@ class Figure:
             return True
         return False
 
+    def rotate(self, n):
+        for i in range(n):
+            self.rotate_()
+
+    def rotate_(self):
+        x_offset = min([i[0] for i in self.blocks])
+        y_offset = min([i[1] for i in self.blocks])
+
+        m = [[0] * 4 for i in range(4)]
+
+        for block in self.blocks:
+            tetris.board[block[0]][block[1]] = 0
+            m[block[0] - x_offset][block[1] - y_offset] = 1
+
+        for i in range(5, 0, -1):
+            m_ = [j[:i] for j in m[:i]]
+            if sum(m_, []).count(1) != 4:
+                break
+
+        m = [j[:i + 1] for j in m[:i + 1]]
+        a = [[m[j][i] for j in range(len(m))] for i in range(len(m[0]) -1, -1, -1)]
+
+        for i in a:
+            if not any(i):
+                x_offset -= 1
+            else:
+                break
+
+        for i in range(len(a)):
+            if not any([j[i] for j in a]):
+                y_offset -= 1
+            else:
+                break
+
+        new_blocks = []
+
+        for i in range(len(a)):
+            for j in range(len(a)):
+                if a[i][j] == 1:
+                    tetris.board[i + x_offset][j + y_offset] = 1
+                    new_blocks.append([i + x_offset, j + y_offset])
+
+        self.blocks = new_blocks
+
+        m = [[0] * 4 for i in range(4)]
+
+        for block in self.blocks:
+            m[block[0] - x_offset][block[1] - y_offset] = 1
+
 
 class Hero(Figure):
     def __init__(self, tetris, position):
@@ -196,8 +245,8 @@ class Tetris:
             elif figure.move_down() == False:
                 self.current_figure = None
 
-            if all(self.board[-1]):
-                self.board[-1] = [0] * self.width
+            while all(self.board[-1]):
+                self.board = [[0] * self.width] + self.board[:-1]
                 self.score += 100
 
     def render(self, screen):
@@ -222,8 +271,8 @@ def figures_sequence(figures):
 
 
 if __name__ == '__main__':
-    DEFAULT_SPEED = 10
-    INCREASED_SPEED = 50
+    DEFAULT_SPEED = 6
+    INCREASED_SPEED = 30
     FIGURES = [Hero, Smashboy, Teewee, OrangeRicky,
                BlueRicky, Cleveland, RhodeIsland]
     FIGURES_SEQUENCE = figures_sequence(FIGURES)
@@ -262,14 +311,18 @@ if __name__ == '__main__':
             elif event.type == pygame.KEYDOWN:
                 if event.key in [97, 100, 115]:
                     current_key = event.key
+                elif event.key == 101:
+                    tetris.current_figure.rotate(3)
+                elif event.key == 113:
+                    tetris.current_figure.rotate(1)
             elif event.type == pygame.KEYUP:
                 if event.key in [97, 100, 115]:
                     current_key = None
 
         if tetris.current_figure:
-            if current_key == 97:
+            if current_key == 97:  # pressed A
                 tetris.current_figure.move_left()
-            elif current_key == 100:
+            elif current_key == 100:  # pressed D
                 tetris.current_figure.move_right()
             elif current_key == 115:  # pressed S
                 speed = INCREASED_SPEED
