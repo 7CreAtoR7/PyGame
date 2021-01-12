@@ -29,14 +29,7 @@ class Start:
             all_sprites.draw(screen)
             pygame.display.update()
 
-
-def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
-    fullname = "C:/Users/xartu/OneDrive/Рабочий стол/Work plase/Pesyah Vs Python/PyGame/Tetris/data/Start_Fon.jpg"
-    image = pygame.image.load(fullname)
-    return image
-
-
+            
 pygame.init()
 size = weight, height = 1400, 900
 screen = pygame.display.set_mode(size)
@@ -46,7 +39,7 @@ pygame.display.set_caption('Welcome to Tetris')
 
 all_sprites = pygame.sprite.Group()
 image = pygame.sprite.Sprite()
-image.image = load_image('Start_Fon.jpg')
+image.image = pygame.image.load('data/Start_Fon.jpg')
 image.rect = image.image.get_rect()
 image.rect.x = 0
 image.rect.y = 0
