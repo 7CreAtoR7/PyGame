@@ -245,9 +245,19 @@ class Tetris:
             elif figure.move_down() == False:
                 self.current_figure = None
 
+            cnt = 0
             while all(self.board[-1]):
                 self.board = [[0] * self.width] + self.board[:-1]
+                cnt += 1
+
+            if cnt == 1:
                 self.score += 100
+            elif cnt == 2:
+                self.score += 300
+            elif cnt == 3:
+                self.score += 500
+            else:
+                self.score += 1000
 
     def render(self, screen):
         screen.fill((0, 0, 0))
