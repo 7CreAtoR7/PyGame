@@ -7,32 +7,42 @@ class Start:
 
     def __init__(self, screen, all_sprites):
 
+        self.name = ''
+
         run = True
 
         while run:
             time_delta = clock.tick(60) / 1000.0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    sys.exit()
                 
                 if event.type == pygame.USEREVENT:
                     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == go:
-                            pass
+                            if label.text != '':
+                                self.name = label.text
+                                return
+
                         elif event.ui_element == to_exit:
                             sys.exit()
 
+
                 manager.process_events(event)
+                manager1.process_events(event)
+
             manager.update(time_delta)
             manager.draw_ui(screen)
 
             all_sprites.draw(screen)
+            manager1.update(time_delta)
+            manager1.draw_ui(screen)
             pygame.display.update()
+            pygame.display.flip()
 
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
-    fullname = "C:/Users/xartu/OneDrive/Рабочий стол/Work plase/Pesyah Vs Python/PyGame/Tetris/data/Start_Fon.jpg"
     image = pygame.image.load(fullname)
     return image
 
@@ -54,20 +64,28 @@ all_sprites.add(image)
 all_sprites.draw(screen)
 
 
-
 manager = pygame_gui.UIManager((1400, 900))
-
+manager1 = pygame_gui.UIManager((1400, 900), 'text_entry_line.json')
+#510 110
 go = pygame_gui.elements.UIButton(
-    relative_rect=pygame.Rect((510, 110), (450, 350)),
+    relative_rect=pygame.Rect((450, 350), (500, 100)),
     text='',
-    manager=manager
+    manager=manager,
+    visible=1
 )
-
+#450 490
 to_exit = pygame_gui.elements.UIButton(
-    relative_rect=pygame.Rect((450, 490), (450, 350)),
+    relative_rect=pygame.Rect((450, 490), (500, 100)),
     text='',
-    manager=manager
+    manager=manager,
+    visible=1
+)
+#300 230
+label = pygame_gui.elements.UITextEntryLine(
+    relative_rect=pygame.Rect((298, 220), (805, -1)),
+    manager=manager1
 )
 
-
-Start(screen, all_sprites)
+if __name__ == "__main__":
+    nickname = Start(screen, all_sprites)
+    nickname = nickname.name
