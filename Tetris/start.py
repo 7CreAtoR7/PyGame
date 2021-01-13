@@ -18,7 +18,8 @@ class Start:
                 if event.type == pygame.USEREVENT:
                     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == go:
-                            pass
+                            run = False
+                            break
                         elif event.ui_element == to_exit:
                             sys.exit()
 
