@@ -20,15 +20,10 @@ class Start:
                 if event.type == pygame.USEREVENT:
                     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == go:
-<<<<<<< HEAD
                             if label.text != '':
                                 self.name = label.text
                                 return
 
-=======
-                            run = False
-                            break
->>>>>>> a8205d181f777d953c5bae4ef3bcb9b255039a22
                         elif event.ui_element == to_exit:
                             sys.exit()
 
@@ -45,7 +40,6 @@ class Start:
             pygame.display.update()
             pygame.display.flip()
 
-<<<<<<< HEAD
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
@@ -53,9 +47,6 @@ def load_image(name, colorkey=None):
     return image
 
 
-=======
-            
->>>>>>> a8205d181f777d953c5bae4ef3bcb9b255039a22
 pygame.init()
 size = weight, height = 1400, 900
 screen = pygame.display.set_mode(size)
@@ -95,11 +86,6 @@ label = pygame_gui.elements.UITextEntryLine(
     manager=manager1
 )
 
-<<<<<<< HEAD
 if __name__ == "__main__":
     nickname = Start(screen, all_sprites)
     nickname = nickname.name
-=======
-
-Start(screen, all_sprites)
->>>>>>> a8205d181f777d953c5bae4ef3bcb9b255039a22
