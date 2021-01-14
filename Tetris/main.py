@@ -341,7 +341,7 @@ if __name__ == '__main__':
         score INTEGER
     )""")
 
-    tetris = Tetris(10, 15, 39, 500, 100, 'nickname')
+    tetris = Tetris(10, 15, 39, 601, 270, 'nickname')
 
     bg = pygame.image.load('data/Game_Form.png')
 
@@ -418,7 +418,7 @@ if __name__ == '__main__':
         screen.blit(text, (1250, 165))
 
         text = font.render(f'{tetris.score}', False, (255, 200, 123))
-        screen.blit(text, (1250, 125))
+        screen.blit(text, (1275, 45))
 
         pygame.display.flip()
 
