@@ -18,16 +18,19 @@ class Figure:
         self.blocks = blocks
 
     def update_result(self):
+        nickname = self.tetris.nickname
+        score = self.tetris.score
+
         lb = cur.execute(f"""SELECT * FROM Results WHERE
-                             nickname={self.nickname}""").fetchall()
+                             nickname='{nickname}'""").fetchall()
         print(lb)
         if not lb:
             cur.execute(f"""INSERT INTO Results VALUES (
-                {self.nickname},
-                {self.score})""")
+                '{nickname}',
+                {score})""")
         else:
-            cur.execute(f"""UPDATE Results WHERE nickname={self.nickname}
-                SET score={self.score}""")
+            cur.execute(f"""UPDATE Results WHERE nickname='{nickname}'
+                SET score={score}""")
 
         con.commit()
 
@@ -35,21 +38,21 @@ class Figure:
         try:
             return max([row for row, col in self.blocks])
         except:
-            update_result()
+            self.update_result()
             exit() # GAME OVER
 
     def get_most_left(self):
         try:
             return min([col for row, col in self.blocks])
         except:
-            update_result()
+            self.update_result()
             exit() # GAME OVER
 
     def get_most_right(self):
         try:
             return max([col for row, col in self.blocks])
         except:
-            update_result()
+            self.update_result()
             exit() # GAME OVER
 
     def move_down(self):
