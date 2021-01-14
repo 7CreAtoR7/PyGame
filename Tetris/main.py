@@ -23,14 +23,15 @@ class Figure:
 
         lb = cur.execute(f"""SELECT * FROM Results WHERE
                              nickname='{nickname}'""").fetchall()
-        print(lb)
+        
         if not lb:
             cur.execute(f"""INSERT INTO Results VALUES (
                 '{nickname}',
                 {score})""")
         else:
-            cur.execute(f"""UPDATE Results WHERE nickname='{nickname}'
-                SET score={score}""")
+            cur.execute(f"""UPDATE Results
+                SET score={score}
+                WHERE nickname='{nickname}'""")
 
         con.commit()
 
