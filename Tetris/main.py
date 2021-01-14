@@ -258,9 +258,17 @@ class Tetris:
                 self.current_figure = None
 
             cnt = 0
-            while all(self.board[-1]):
-                self.board = [[0] * self.width] + self.board[:-1]
-                cnt += 1
+            board = deepcopy(self.board)
+            i = self.height - 1
+            while i >= 0:
+                if all(board[i]):
+                    #board = [[0] * self.width] + board[:i]
+                    board.pop(i)
+                    board = [[0] * self.width] + board
+                    cnt += 1
+                else:
+                    i -= 1
+            self.board = board
 
             if cnt == 1:
                 self.score += 100
@@ -268,7 +276,7 @@ class Tetris:
                 self.score += 300
             elif cnt == 3:
                 self.score += 500
-            else:
+            elif cnt == 4:
                 self.score += 1000
 
     def render(self, screen):
@@ -331,8 +339,7 @@ if __name__ == '__main__':
     speed = DEFAULT_SPEED
     current_tick = 0
     current_key = None
-    pygame.font.init()
-    font = pygame.font.SysFont('Comic Sans MS', 30)
+    font = pygame.font.SysFont(None, 60)
 
     start_time = time.time()
 
@@ -349,20 +356,30 @@ if __name__ == '__main__':
                 if event.key in [97, 100, 115]:
                     current_key = event.key
                 elif event.key == 101:
-                    if tetris.current_figure is not None:
+                    try:
                         tetris.current_figure.rotate(3)
+                    except:
+                        pass
                 elif event.key == 113:
-                    if tetris.current_figure is not None:
+                    try:
                         tetris.current_figure.rotate(1)
+                    except:
+                        pass
             elif event.type == pygame.KEYUP:
                 if event.key in [97, 100, 115]:
                     current_key = None
 
         if tetris.current_figure:
             if current_key == 97:  # pressed A
-                tetris.current_figure.move_left()
+                try:
+                    tetris.current_figure.move_left()
+                except:
+                    pass
             elif current_key == 100:  # pressed D
-                tetris.current_figure.move_right()
+                try:
+                    tetris.current_figure.move_right()
+                except:
+                    pass
             elif current_key == 115:  # pressed S
                 speed = INCREASED_SPEED
             else:
@@ -374,8 +391,16 @@ if __name__ == '__main__':
 
         tetris.render(screen)
 
-        timer = time.time() - start_time
+        timer = int(time.time() - start_time)
+        m, s = str(timer // 60), str(timer % 60)
+        if len(s) == 1:
+            s = '0' + s
 
+        text = font.render(f'{m}:{s}', False, (255, 200, 123))
+        screen.blit(text, (1250, 165))
+
+        text = font.render(f'{tetris.score}', False, (255, 200, 123))
+        screen.blit(text, (1250, 125))
 
         pygame.display.flip()
 
