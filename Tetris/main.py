@@ -2,6 +2,7 @@ from copy import deepcopy
 import pygame
 import random
 import sqlite3
+import time
 
 
 class Figure:
@@ -17,13 +18,22 @@ class Figure:
         self.blocks = blocks
 
     def get_most_down(self):
-        return max([row for row, col in self.blocks])
+        try:
+            return max([row for row, col in self.blocks])
+        except:
+            exit() # GAME OVER
 
     def get_most_left(self):
-        return min([col for row, col in self.blocks])
+        try:
+            return min([col for row, col in self.blocks])
+        except:
+            exit() # GAME OVER
 
     def get_most_right(self):
-        return max([col for row, col in self.blocks])
+        try:
+            return max([col for row, col in self.blocks])
+        except:
+            exit() # GAME OVER
 
     def move_down(self):
         if self.get_most_down() + 1 >= self.tetris.height:
@@ -221,24 +231,26 @@ class RhodeIsland(Figure):
 
 
 class Tetris:
-    def __init__(self, width, height, cell_size):
+    def __init__(self, width, height, cell_size, x_offset, y_offset):
         self.width = width
         self.height = height
         self.board = [[0] * width for _ in range(height)]
         self.current_figure = None
+        self.offset = x_offset, y_offset
         self.cell_size = cell_size
         self.score = 0
 
     def add_figure(self, figure):
         col = random.randint(3, self.width - 4)
         self.current_figure = figure(self, (0, col))
-        if self.current_figure == False:
-            exit()  # TODO: Game over!
 
     def tick(self):
+        global next_figure
+
         figure = self.current_figure
         if figure is None:
-            self.add_figure(next(FIGURES_SEQUENCE))
+            self.add_figure(next_figure)
+            next_figure = next(FIGURES_SEQUENCE)
         else:
             if figure.get_most_down() == self.height:
                 self.current_figure = None
@@ -260,15 +272,23 @@ class Tetris:
                 self.score += 1000
 
     def render(self, screen):
-        screen.fill((0, 0, 0))
-        cell_size = self.cell_size
+        x, y = self.offset
+        cs = self.cell_size
+
+        screen.blit(bg, (0, 0))
+        pygame.draw.rect(screen,
+                         (255, 255, 255),
+                         ((x, y),
+                          (self.width * cs, self.height * cs)),
+                         1)
+
         for row in range(self.height):
             for col in range(self.width):
-                pygame.draw.rect(screen,
-                                 (255, 255, 255),
-                                 ((col * cell_size, row * cell_size),
-                                  (cell_size, cell_size)),
-                                 not bool(self.board[row][col]))
+                if bool(self.board[row][col]):
+                    pygame.draw.rect(screen,
+                                     (255, 255, 255),
+                                     ((x + col * cs, y + row * cs),
+                                      (cs, cs)))
 
 
 def figures_sequence(figures):
@@ -295,19 +315,26 @@ if __name__ == '__main__':
         score INTEGER
     )""")
 
-    tetris = Tetris(10, 15, 30)
+    tetris = Tetris(10, 15, 39, 500, 100)
+
+    bg = pygame.image.load('data/Game_Form.png')
+
     tetris.add_figure(next(FIGURES_SEQUENCE))
+    next_figure = next(FIGURES_SEQUENCE)
 
     pygame.init()
     pygame.display.set_caption('Тетрис')
-    size = width, height = 300, 450
+    size = width, height = 1400, 900
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
     fps = 15
     speed = DEFAULT_SPEED
     current_tick = 0
     current_key = None
-    next_figure = None
+    pygame.font.init()
+    font = pygame.font.SysFont('Comic Sans MS', 30)
+
+    start_time = time.time()
 
     running = True
     while running:
@@ -322,9 +349,11 @@ if __name__ == '__main__':
                 if event.key in [97, 100, 115]:
                     current_key = event.key
                 elif event.key == 101:
-                    tetris.current_figure.rotate(3)
+                    if tetris.current_figure is not None:
+                        tetris.current_figure.rotate(3)
                 elif event.key == 113:
-                    tetris.current_figure.rotate(1)
+                    if tetris.current_figure is not None:
+                        tetris.current_figure.rotate(1)
             elif event.type == pygame.KEYUP:
                 if event.key in [97, 100, 115]:
                     current_key = None
@@ -344,6 +373,10 @@ if __name__ == '__main__':
             current_tick = 0
 
         tetris.render(screen)
+
+        timer = time.time() - start_time
+
+
         pygame.display.flip()
 
     pygame.quit()
