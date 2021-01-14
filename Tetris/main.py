@@ -17,22 +17,39 @@ class Figure:
             tetris.board[row][col] = 1
         self.blocks = blocks
 
+    def update_result(self):
+        lb = cur.execute(f"""SELECT * FROM Results WHERE
+                             nickname={self.nickname}""").fetchall()
+        print(lb)
+        if not lb:
+            cur.execute(f"""INSERT INTO Results VALUES (
+                {self.nickname},
+                {self.score})""")
+        else:
+            cur.execute(f"""UPDATE Results WHERE nickname={self.nickname}
+                SET score={self.score}""")
+
+        con.commit()
+
     def get_most_down(self):
         try:
             return max([row for row, col in self.blocks])
         except:
+            update_result()
             exit() # GAME OVER
 
     def get_most_left(self):
         try:
             return min([col for row, col in self.blocks])
         except:
+            update_result()
             exit() # GAME OVER
 
     def get_most_right(self):
         try:
             return max([col for row, col in self.blocks])
         except:
+            update_result()
             exit() # GAME OVER
 
     def move_down(self):
@@ -231,13 +248,14 @@ class RhodeIsland(Figure):
 
 
 class Tetris:
-    def __init__(self, width, height, cell_size, x_offset, y_offset):
+    def __init__(self, width, height, cell_size, x_offset, y_offset, nickname):
         self.width = width
         self.height = height
         self.board = [[0] * width for _ in range(height)]
         self.current_figure = None
         self.offset = x_offset, y_offset
         self.cell_size = cell_size
+        self.nickname = nickname
         self.score = 0
 
     def add_figure(self, figure):
@@ -323,7 +341,7 @@ if __name__ == '__main__':
         score INTEGER
     )""")
 
-    tetris = Tetris(10, 15, 39, 500, 100)
+    tetris = Tetris(10, 15, 39, 500, 100, 'nickname')
 
     bg = pygame.image.load('data/Game_Form.png')
 
