@@ -7,33 +7,32 @@ import sqlite3
 import time
 from copy import deepcopy
 
+NAME_LIST = []  # хранится имя игрока
+
 
 class Start:
-
     def __init__(self, screen, all_sprites):
-
         self.name = ''
-
-        run = True
-        pygame.mixer.music.load('data/music.mp3')
+        pygame.mixer.music.load('data/music.mp3')  # подключаем музыку
         pygame.mixer.music.play(-1)
 
+        run = True
         while run:
             time_delta = clock.tick(60) / 1000.0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                
+
                 if event.type == pygame.USEREVENT:
                     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == go:
                             if label.text != '':
                                 self.name = label.text
+                                NAME_LIST.append(self.name)
                                 return
 
                         elif event.ui_element == to_exit:
                             sys.exit()
-
 
                 manager.process_events(event)
                 manager1.process_events(event)
@@ -48,7 +47,7 @@ class Start:
             pygame.display.flip()
 
 
-def load_image(name, colorkey=None):
+def load_image(name):
     fullname = os.path.join('data', name)
     image = pygame.image.load(fullname)
     return image
@@ -70,32 +69,30 @@ image.rect.y = 0
 all_sprites.add(image)
 all_sprites.draw(screen)
 
-
 manager = pygame_gui.UIManager((1400, 900))
 manager1 = pygame_gui.UIManager((1400, 900), 'text_entry_line.json')
-#510 110
+# 510 110
 go = pygame_gui.elements.UIButton(
     relative_rect=pygame.Rect((450, 350), (500, 100)),
     text='',
     manager=manager,
     visible=1
 )
-#450 490
+# 450 490
 to_exit = pygame_gui.elements.UIButton(
     relative_rect=pygame.Rect((450, 490), (500, 100)),
     text='',
     manager=manager,
     visible=1
 )
-#300 230
+# 300 230
 label = pygame_gui.elements.UITextEntryLine(
     relative_rect=pygame.Rect((298, 220), (805, -1)),
     manager=manager1
 )
-
-if __name__ == "__main__":
-    nickname = Start(screen, all_sprites)
-    nickname = nickname.name
+# инициализируем игру и стартовое окно
+nickname = Start(screen, all_sprites)
+nickname = nickname.name
 
 
 class Figure:
@@ -107,6 +104,7 @@ class Figure:
             row, col = blocks[idx]
             if tetris.board[row][col] == 1:
                 return False
+
             tetris.board[row][col] = 1
         self.blocks = blocks
 
@@ -116,7 +114,7 @@ class Figure:
 
         lb = cur.execute(f"""SELECT * FROM Results WHERE
                              nickname='{nickname}'""").fetchall()
-        
+
         if not lb:
             cur.execute(f"""INSERT INTO Results VALUES (
                 '{nickname}',
@@ -130,7 +128,7 @@ class Figure:
 
     def finish_game(self):
         pygame.init()
-        size = width, height = 1400, 900
+        size = 1400, 900
         screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Тетрис')
 
@@ -185,17 +183,13 @@ class Figure:
             pygame.display.flip()
         pygame.quit()
 
-
-
-
-
     def get_most_down(self):
         try:
             return max([row for row, col in self.blocks])
         except:
             self.update_result()
             self.finish_game()
-            exit() # GAME OVER
+            exit()
 
     def get_most_left(self):
         try:
@@ -203,7 +197,7 @@ class Figure:
         except:
             self.update_result()
             self.finish_game()
-            exit() # GAME OVER
+            exit()
 
     def get_most_right(self):
         try:
@@ -211,7 +205,7 @@ class Figure:
         except:
             self.update_result()
             self.finish_game()
-            exit() # GAME OVER
+            exit()
 
     def move_down(self):
         if self.get_most_down() + 1 >= self.tetris.height:
@@ -237,7 +231,7 @@ class Figure:
 
     def move_left(self):
         if self.get_most_down() + 1 >= self.tetris.height or \
-           self.get_most_left() <= 0:
+                self.get_most_left() <= 0:
             return False
 
         blocks = deepcopy(self.blocks)
@@ -260,7 +254,7 @@ class Figure:
 
     def move_right(self):
         if self.get_most_down() + 1 >= self.tetris.height or \
-           self.get_most_right() + 1 >= self.tetris.width:
+                self.get_most_right() + 1 >= self.tetris.width:
             return False
 
         blocks = deepcopy(self.blocks)
@@ -301,7 +295,7 @@ class Figure:
                 break
 
         m = [j[:i + 1] for j in m[:i + 1]]
-        a = [[m[j][i] for j in range(len(m))] for i in range(len(m[0]) -1, -1, -1)]
+        a = [[m[j][i] for j in range(len(m))] for i in range(len(m[0]) - 1, -1, -1)]
 
         for i in a:
             if not any(i):
@@ -441,7 +435,6 @@ class Tetris:
             i = self.height - 1
             while i >= 0:
                 if all(board[i]):
-                    #board = [[0] * self.width] + board[:i]
                     board.pop(i)
                     board = [[0] * self.width] + board
                     cnt += 1
@@ -502,7 +495,7 @@ if __name__ == '__main__':
         score INTEGER
     )""")
 
-    tetris = Tetris(10, 20, 39, 601, 55, 'nickname')
+    tetris = Tetris(10, 20, 39, 601, 55, str(NAME_LIST[0]))
 
     bg = pygame.image.load('data/Game_Form.png')
 
