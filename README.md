@@ -3,7 +3,7 @@
 ### Авторы
 - [Gusarich](https://github.com/Gusarich)
 - [7CreAtoR7](https://github.com/7CreAtoR7)
-- [Pesyah](https://github.com/GODNESSMOUSE)
+- [Pesyah](https://github.com/Pesyah)
 
 ### Установка
 Для установки игры достаточно скачать этот репозиторий к себе:
@@ -16,6 +16,6 @@ git clone https://github.com/7CreAtoR7/PyGame.git
 Через командную строку
 ```bash
 cd PyGame/Tetris
-python main.py
+python Tetris.py
 ```
-Или вручную, запустив файл `PyGame/Tetris/main.py`
+Или вручную, запустив файл `PyGame/Tetris/Tetris.py`
