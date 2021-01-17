@@ -14,7 +14,7 @@ class Start:
     def __init__(self, screen, all_sprites):
         self.name = ''
         pygame.mixer.music.load('data/music.mp3')  # подключаем музыку
-        pygame.mixer.music.play(-1) 
+        pygame.mixer.music.play(-1)
 
         run = True
         while run:
@@ -99,16 +99,18 @@ class Figure:
     def __init__(self, tetris, position, blocks):
         self.tetris = tetris
         for idx in range(len(blocks)):
+            # записываем в self.blocks координаты всех блоков фигуры
             blocks[idx][0] += position[0]
             blocks[idx][1] += position[1]
             row, col = blocks[idx]
             if tetris.board[row][col] == 1:
-                return False
-
+                return
             tetris.board[row][col] = 1
         self.blocks = blocks
 
     def update_result(self):
+        # функция обновления результата в таблице лидеров
+
         nickname = self.tetris.nickname
         score = self.tetris.score
 
@@ -184,6 +186,8 @@ class Figure:
         pygame.quit()
 
     def get_most_down(self):
+        # функция получения самой нижней клетки фигуры
+
         try:
             return max([row for row, col in self.blocks])
         except:
@@ -192,6 +196,8 @@ class Figure:
             exit()
 
     def get_most_left(self):
+        # функция получения самой левой клетки фигуры
+
         try:
             return min([col for row, col in self.blocks])
         except:
@@ -200,6 +206,8 @@ class Figure:
             exit()
 
     def get_most_right(self):
+        # функция получения самой правой клетки фигуры
+
         try:
             return max([col for row, col in self.blocks])
         except:
@@ -208,20 +216,23 @@ class Figure:
             exit()
 
     def move_down(self):
+        # функция перемещения фигуры вниз
+
         if self.get_most_down() + 1 >= self.tetris.height:
             return False
 
+        # копии
         blocks = deepcopy(self.blocks)
         board = deepcopy(tetris.board)
 
         for idx in range(len(blocks)):
             row, col = blocks[idx]
-            board[row][col] = 0
-            blocks[idx] = (row + 1, col)
+            board[row][col] = 0  # опустошаем клетку
+            blocks[idx] = (row + 1, col)  # обновляем координаты блока фигуры
 
         for row, col in blocks:
             if board[row][col] == 1:
-                break
+                break  # если в новой позиции уже есть занятые клетки, break
             board[row][col] = 1
         else:
             self.blocks = blocks
@@ -230,21 +241,24 @@ class Figure:
         return False
 
     def move_left(self):
+        # функция перемещения фигуры влево
+
         if self.get_most_down() + 1 >= self.tetris.height or \
                 self.get_most_left() <= 0:
-            return False
+            return False  # если новые координаты выходят за границы
 
+        # копии
         blocks = deepcopy(self.blocks)
         board = deepcopy(tetris.board)
 
         for idx in range(len(blocks)):
             row, col = blocks[idx]
-            board[row][col] = 0
-            blocks[idx] = (row, col - 1)
+            board[row][col] = 0  # опустошаем клетку
+            blocks[idx] = (row, col - 1)  # обновляем координаты блока фигуры
 
         for row, col in blocks:
             if board[row][col] == 1:
-                break
+                break  # если в новой позиции уже есть занятые клетки, break
             board[row][col] = 1
         else:
             self.blocks = blocks
@@ -253,21 +267,23 @@ class Figure:
         return False
 
     def move_right(self):
+        # функция перемещения фигуры вправо
+
         if self.get_most_down() + 1 >= self.tetris.height or \
                 self.get_most_right() + 1 >= self.tetris.width:
-            return False
+            return False  # если новые координаты выходят за границы
 
         blocks = deepcopy(self.blocks)
         board = deepcopy(tetris.board)
 
         for idx in range(len(blocks)):
             row, col = blocks[idx]
-            board[row][col] = 0
-            blocks[idx] = (row, col + 1)
+            board[row][col] = 0  # опустошаем клетку
+            blocks[idx] = (row, col + 1)  # обновляем координаты блока фигуры
 
         for row, col in blocks:
             if board[row][col] == 1:
-                break
+                break  # если в новой позиции уже есть занятые клетки, break
             board[row][col] = 1
         else:
             self.blocks = blocks
@@ -276,13 +292,19 @@ class Figure:
         return False
 
     def rotate(self, n):
+        # функция поворота фигуры на 90 градусов n раз
+
         for i in range(n):
             self.rotate_()
 
     def rotate_(self):
+        # функция поворота фигуры на 90 градусов
+
+        # смещения координат фигуры относительно (0, 0)
         x_offset = min([i[0] for i in self.blocks])
         y_offset = min([i[1] for i in self.blocks])
 
+        # заготовка для новой фигуры
         m = [[0] * 4 for i in range(4)]
 
         for block in self.blocks:
@@ -290,12 +312,14 @@ class Figure:
             m[block[0] - x_offset][block[1] - y_offset] = 1
 
         for i in range(5, 0, -1):
+            # убираем пустые ряды
             m_ = [j[:i] for j in m[:i]]
             if sum(m_, []).count(1) != 4:
                 break
 
         m = [j[:i + 1] for j in m[:i + 1]]
-        a = [[m[j][i] for j in range(len(m))] for i in range(len(m[0]) - 1, -1, -1)]
+        a = [[m[j][i] for j in range(len(m))] for \
+            i in range(len(m[0]) - 1, -1, -1)]
 
         for i in a:
             if not any(i):
@@ -414,18 +438,22 @@ class Tetris:
         self.score = 0
 
     def add_figure(self, figure):
+        # метод добавления фигуры на поле
+
         col = random.randint(3, self.width - 4)
         self.current_figure = figure(self, (0, col))
 
     def tick(self):
+        # метод обработки одного тика игры
+
         global next_figure
 
         figure = self.current_figure
         if figure is None:
-            self.add_figure(next_figure)
+            self.add_figure(next_figure) # Если на поле нет фигуры, добавляем
             next_figure = next(FIGURES_SEQUENCE)
         else:
-            if figure.get_most_down() == self.height:
+            if figure.get_most_down() == self.height: # если фигура в самом низу
                 self.current_figure = None
             elif figure.move_down() == False:
                 self.current_figure = None
@@ -434,6 +462,7 @@ class Tetris:
             board = deepcopy(self.board)
             i = self.height - 1
             while i >= 0:
+                # цикл обработки заполненных рядов
                 if all(board[i]):
                     board.pop(i)
                     board = [[0] * self.width] + board
@@ -442,6 +471,7 @@ class Tetris:
                     i -= 1
             self.board = board
 
+            # выдача очков за ряды
             if cnt == 1:
                 self.score += 100
             elif cnt == 2:
@@ -452,6 +482,8 @@ class Tetris:
                 self.score += 1000
 
     def render(self, screen):
+        # метод для рендеринга поля на экран
+
         x, y = self.offset
         cs = self.cell_size
 
@@ -472,6 +504,8 @@ class Tetris:
 
 
 def figures_sequence(figures):
+    # функция последовательности случайных фигур
+
     figures_copy = figures[:]
     while True:
         figure = random.choice(figures_copy)
