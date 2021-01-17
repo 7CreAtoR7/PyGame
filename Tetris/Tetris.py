@@ -100,6 +100,7 @@ class Figure:
         self.tetris = tetris
         for idx in range(len(blocks)):
             blocks[idx][0] += position[0]
+            # комментарий Даниила
             blocks[idx][1] += position[1]
             row, col = blocks[idx]
             if tetris.board[row][col] == 1:
