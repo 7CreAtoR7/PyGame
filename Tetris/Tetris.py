@@ -14,16 +14,16 @@ class Start:
     def __init__(self, screen, all_sprites):
         self.name = ''
         pygame.mixer.music.load('data/music.mp3')  # подключаем музыку
-        pygame.mixer.music.play(-1)
+        pygame.mixer.music.play(-1) 
 
         run = True
         while run:
-            time_delta = clock.tick(60) / 1000.0
+            time_delta = clock.tick(60) / 1000.0 #устанавливаем таймер
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
 
-                if event.type == pygame.USEREVENT:
+                if event.type == pygame.USEREVENT: #обработка ивентов pygame_gui
                     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == go:
                             if label.text != '':
@@ -37,17 +37,17 @@ class Start:
                 manager.process_events(event)
                 manager1.process_events(event)
 
-            manager.update(time_delta)
+            manager.update(time_delta) #кнопки рисуются раньше окна
             manager.draw_ui(screen)
 
-            all_sprites.draw(screen)
+            all_sprites.draw(screen) #рисуется фон
             manager1.update(time_delta)
-            manager1.draw_ui(screen)
+            manager1.draw_ui(screen) #рисуется поле ввода
             pygame.display.update()
             pygame.display.flip()
 
 
-def load_image(name):
+def load_image(name): # Функция загрузки файла
     fullname = os.path.join('data', name)
     image = pygame.image.load(fullname)
     return image
@@ -62,7 +62,7 @@ pygame.display.set_caption('Welcome to Tetris')
 
 all_sprites = pygame.sprite.Group()
 image = pygame.sprite.Sprite()
-image.image = pygame.image.load('data/Start_Fon.jpg')
+image.image = pygame.image.load('data/Start_Fon.jpg') #Фон для стартового окна
 image.rect = image.image.get_rect()
 image.rect.x = 0
 image.rect.y = 0
@@ -70,22 +70,22 @@ all_sprites.add(image)
 all_sprites.draw(screen)
 
 manager = pygame_gui.UIManager((1400, 900))
-manager1 = pygame_gui.UIManager((1400, 900), 'text_entry_line.json')
-# 510 110
+manager1 = pygame_gui.UIManager((1400, 900), 'text_entry_line.json') # Создание 2-ух менеджеров для кнопок и поля отдельно
+# 450 350 - положение кнопки "Начать"
 go = pygame_gui.elements.UIButton(
     relative_rect=pygame.Rect((450, 350), (500, 100)),
     text='',
     manager=manager,
     visible=1
 )
-# 450 490
+# 450 490 - положения кнопки "Выйти"
 to_exit = pygame_gui.elements.UIButton(
     relative_rect=pygame.Rect((450, 490), (500, 100)),
     text='',
     manager=manager,
     visible=1
 )
-# 300 230
+# 300 230 - положение поля ввода
 label = pygame_gui.elements.UITextEntryLine(
     relative_rect=pygame.Rect((298, 220), (805, -1)),
     manager=manager1
