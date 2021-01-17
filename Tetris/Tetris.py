@@ -127,11 +127,6 @@ class Figure:
         con.commit()
 
     def finish_game(self):
-        con = sqlite3.connect('database.sqlite')
-        cur = con.cursor()
-        cur.execute(f"INSERT INTO Results('nickname', score) VALUES(?, ?)", (nickname, self.tetris.score))
-        con.commit()
-
         pygame.init()
         size = 1400, 900
         screen = pygame.display.set_mode(size)
@@ -520,11 +515,27 @@ if __name__ == '__main__':
 
     start_time = time.time()
 
+    manager2 = pygame_gui.UIManager((1400, 900))
+
+    pause = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((1200, 250), (180, 100)),
+        text='',
+        manager=manager2
+    )
+    # 450 490
+    to_exit = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((1200, 775), (180, 100)),
+        text='',
+        manager=manager2
+    )
+
     running = True
     while running:
         clock.tick(fps)
 
         current_tick += speed
+
+        time_delta = clock.tick(60) / 1000.0
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -546,6 +557,16 @@ if __name__ == '__main__':
                 if event.key in [97, 100, 115]:
                     current_key = None
 
+            if event.type == pygame.USEREVENT:
+                    if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                        if event.ui_element == pause:
+                            pass
+
+                        elif event.ui_element == to_exit:
+                            sys.exit()
+
+            manager2.process_events(event)
+
         if tetris.current_figure:
             if current_key == 97:  # pressed A
                 try:
@@ -562,9 +583,13 @@ if __name__ == '__main__':
             else:
                 speed = DEFAULT_SPEED
 
+
         if current_tick >= 50:
             tetris.tick()
             current_tick = 0
+
+        manager2.update(time_delta)
+        manager2.draw_ui(screen)
 
         tetris.render(screen)
 
