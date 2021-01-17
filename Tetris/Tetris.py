@@ -127,6 +127,11 @@ class Figure:
         con.commit()
 
     def finish_game(self):
+        con = sqlite3.connect('database.sqlite')
+        cur = con.cursor()
+        cur.execute(f"INSERT INTO Results('nickname', score) VALUES(?, ?)", (nickname, self.tetris.score))
+        con.commit()
+
         pygame.init()
         size = 1400, 900
         screen = pygame.display.set_mode(size)
@@ -495,7 +500,7 @@ if __name__ == '__main__':
         score INTEGER
     )""")
 
-    tetris = Tetris(10, 20, 39, 601, 55, str(NAME_LIST[0]))
+    tetris = Tetris(10, 5, 39, 601, 55, str(NAME_LIST[0]))
 
     bg = pygame.image.load('data/Game_Form.png')
 
