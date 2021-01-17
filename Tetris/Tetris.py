@@ -3,7 +3,7 @@ import pygame_gui
 import os
 import sys
 import random
-import sqlite3
+import sqlite3 # в бд заносится никнейм и количество очков игрока
 import time
 from copy import deepcopy
 
