@@ -97,6 +97,7 @@ nickname = nickname.name
 
 class Figure:
     def __init__(self, tetris, position, blocks):
+        # комментарий, который покажет, что можно делать коммиты одновременно. Интересно, получится ли. Нужно запомнить, что этот коммент на 100 строчке
         self.tetris = tetris
         for idx in range(len(blocks)):
             blocks[idx][0] += position[0]
