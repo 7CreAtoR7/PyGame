@@ -97,11 +97,9 @@ nickname = nickname.name
 
 class Figure:
     def __init__(self, tetris, position, blocks):
-        # комментарий, который покажет, что можно делать коммиты одновременно. Интересно, получится ли. Нужно запомнить, что этот коммент на 100 строчке
         self.tetris = tetris
         for idx in range(len(blocks)):
             blocks[idx][0] += position[0]
-            # комментарий Даниила
             blocks[idx][1] += position[1]
             row, col = blocks[idx]
             if tetris.board[row][col] == 1:
@@ -128,13 +126,13 @@ class Figure:
 
         con.commit()
 
-    def finish_game(self):
+    def finish_game(self):  # функция обработки финиша игры
         pygame.init()
         size = 1400, 900
         screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Тетрис')
 
-        def load_image(name):
+        def load_image(name):  # загружаем изображения фона и надписи game over
             fullname = os.path.join('data', name)
             # если файл не существует, то выходим
             if not os.path.isfile(fullname):
@@ -167,7 +165,7 @@ class Figure:
         all_sprites.add(sprite)
 
         for _ in range(1):
-            Car(all_sprites)
+            Car(all_sprites)  # спрайт Game Over
 
         running = True
         clock = pygame.time.Clock()
@@ -497,7 +495,7 @@ if __name__ == '__main__':
         score INTEGER
     )""")
 
-    tetris = Tetris(10, 5, 39, 601, 55, str(NAME_LIST[0]))
+    tetris = Tetris(10, 20, 39, 601, 55, str(NAME_LIST[0]))
 
     bg = pygame.image.load('data/Game_Form.png')
 
@@ -591,7 +589,6 @@ if __name__ == '__main__':
                 speed = INCREASED_SPEED
             else:
                 speed = DEFAULT_SPEED
-
 
         if current_tick >= 50 and not paused:
             tetris.tick()
