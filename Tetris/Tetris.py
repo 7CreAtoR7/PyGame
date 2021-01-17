@@ -530,6 +530,7 @@ if __name__ == '__main__':
     )
 
     running = True
+    paused = False
     while running:
         clock.tick(fps)
 
@@ -540,7 +541,8 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.KEYDOWN:
+
+            elif event.type == pygame.KEYDOWN and not paused:
                 if event.key in [97, 100, 115]:
                     current_key = event.key
                 elif event.key == 101:
@@ -553,21 +555,26 @@ if __name__ == '__main__':
                         tetris.current_figure.rotate(1)
                     except:
                         pass
-            elif event.type == pygame.KEYUP:
+
+            elif event.type == pygame.KEYUP and not paused:
                 if event.key in [97, 100, 115]:
                     current_key = None
 
-            if event.type == pygame.USEREVENT:
-                    if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                        if event.ui_element == pause:
-                            pass
+            elif event.type == pygame.USEREVENT:
+                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == pause:
+                        paused = not paused
+                        if paused:
+                            pause_time = time.time()
+                        else:
+                            start_time += time.time() - pause_time
 
-                        elif event.ui_element == to_exit:
-                            sys.exit()
+                    elif event.ui_element == to_exit:
+                        sys.exit()
 
             manager2.process_events(event)
 
-        if tetris.current_figure:
+        if tetris.current_figure and not paused:
             if current_key == 97:  # pressed A
                 try:
                     tetris.current_figure.move_left()
@@ -584,7 +591,7 @@ if __name__ == '__main__':
                 speed = DEFAULT_SPEED
 
 
-        if current_tick >= 50:
+        if current_tick >= 50 and not paused:
             tetris.tick()
             current_tick = 0
 
@@ -593,7 +600,10 @@ if __name__ == '__main__':
 
         tetris.render(screen)
 
-        timer = int(time.time() - start_time)
+        if paused:
+            timer = int(pause_time - start_time)
+        else:
+            timer = int(time.time() - start_time)
         m, s = str(timer // 60), str(timer % 60)
         if len(s) == 1:
             s = '0' + s
