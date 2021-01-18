@@ -321,9 +321,12 @@ class Figure:
         # заготовка для новой фигуры
         m = [[0] * 4 for i in range(4)]
 
+        board = deepcopy(tetris.board)
+        colors = deepcopy(tetris.colors)
+
         for block in self.blocks:
-            tetris.board[block[0]][block[1]] = 0
-            tetris.colors[block[0]][block[1]] = 0
+            board[block[0]][block[1]] = 0
+            colors[block[0]][block[1]] = 0
             m[block[0] - x_offset][block[1] - y_offset] = 1
 
         for i in range(5, 0, -1):
@@ -353,8 +356,8 @@ class Figure:
         for i in range(len(a)):
             for j in range(len(a)):
                 if a[i][j] == 1:
-                    tetris.board[i + x_offset][j + y_offset] = 1
-                    tetris.colors[i + x_offset][j + y_offset] = self.color
+                    board[i + x_offset][j + y_offset] = 1
+                    colors[i + x_offset][j + y_offset] = self.color
                     new_blocks.append([i + x_offset, j + y_offset])
 
         self.blocks = new_blocks
@@ -363,6 +366,9 @@ class Figure:
 
         for block in self.blocks:
             m[block[0] - x_offset][block[1] - y_offset] = 1
+
+        tetris.board = board
+        tetris.colors = colors
 
 
 class Hero(Figure):
