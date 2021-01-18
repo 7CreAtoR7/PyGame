@@ -533,7 +533,6 @@ class Tetris:
         for row in range(self.height):
             for col in range(self.width):
                 if bool(self.board[row][col]):
-                    print(self.board[row][col], self.colors[row][col])
                     im = b_images[self.colors[row][col]]
                     sp = pygame.sprite.Sprite()
                     sp.image = im
