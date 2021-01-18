@@ -508,10 +508,10 @@ class Tetris:
             self.add_figure(next_figure) # Если на поле нет фигуры, добавляем
             next_figure = next(FIGURES_SEQUENCE)
         else:
-            if figure.get_most_down() == self.height: # если фигура в самом низу
+            if figure.get_most_down() == self.height or \
+               figure.move_down() == False: # если фигура в самом низу
                 self.current_figure = None
-            elif figure.move_down() == False:
-                self.current_figure = None
+                play_sound('newblock')
 
     def render(self, screen):
         # метод для рендеринга поля на экран
