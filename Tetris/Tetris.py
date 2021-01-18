@@ -564,7 +564,7 @@ def figures_sequence(figures, sprites):
 
 if __name__ == '__main__':
     DEFAULT_SPEED = 6
-    INCREASED_SPEED = 30
+    INCREASED_SPEED = 80
     FIGURES = [Hero, Smashboy, Teewee, OrangeRicky,
                BlueRicky, Cleveland, RhodeIsland]
     # загрузка спрайтов
