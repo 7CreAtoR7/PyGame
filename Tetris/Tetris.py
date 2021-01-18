@@ -590,6 +590,7 @@ if __name__ == '__main__':
     current_tick = 0
     current_key = None
     font = pygame.font.SysFont(None, 60)
+    font2 = pygame.font.SysFont(None, 30)
 
     start_time = time.time()
 
@@ -690,6 +691,17 @@ if __name__ == '__main__':
 
         text = font.render(f'{tetris.score}', False, (255, 200, 123))
         screen.blit(text, (1275, 45))
+
+        leaders = cur.execute(f"""SELECT score, nickname FROM Results WHERE 1""").fetchall()
+        leaders = sorted(leaders, reverse=True)
+        tx = [f'{i + 1}. {leaders[i][1]}: {leaders[i][0]}' for i in range(len(leaders))]
+
+        text = font2.render('Таблица лидеров:', False, (0, 255, 0))
+        screen.blit(text, (100, 270))
+
+        for t in range(len(tx)):
+            text = font2.render(tx[t], False, (0, 255, 0))
+            screen.blit(text, (100, 320 + t * 40))
 
         pygame.display.flip()
 
