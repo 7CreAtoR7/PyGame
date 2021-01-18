@@ -10,6 +10,11 @@ from copy import deepcopy
 NAME_LIST = []  # хранится имя игрока
 
 
+def play_sound(name):
+    pygame.mixer.music.load(f'data/{name}.mp3')
+    pygame.mixer.music.play()
+
+
 class Start:
     def __init__(self, screen, all_sprites):
         self.name = ''
@@ -131,6 +136,7 @@ class Figure:
         con.commit()
 
     def finish_game(self):  # функция обработки финиша игры
+        play_sound('gameover')
         pygame.init()
         size = 1400, 900
         screen = pygame.display.set_mode(size)
@@ -310,6 +316,8 @@ class Figure:
 
         for i in range(n):
             self.rotate_()
+
+        play_sound('rotate')
 
     def rotate_(self):
         # функция поворота фигуры на 90 градусов
@@ -495,6 +503,9 @@ class Tetris:
             self.board = board
 
             # выдача очков за ряды
+            if 0 < cnt < 5:
+                play_sound('complete')
+
             if cnt == 1:
                 self.score += 100
             elif cnt == 2:
@@ -608,6 +619,8 @@ if __name__ == '__main__':
         manager=manager2
     )
 
+    pygame.mixer.music.unload()
+
     running = True
     paused = False
     while running:
@@ -642,6 +655,7 @@ if __name__ == '__main__':
             elif event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == pause:
+                        play_sound('pause')
                         paused = not paused
                         if paused:
                             pause_time = time.time()
