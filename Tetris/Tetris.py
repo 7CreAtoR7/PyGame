@@ -96,7 +96,7 @@ nickname = nickname.name
 
 
 class Figure:
-    def __init__(self, tetris, position, blocks):
+    def __init__(self, tetris, position, blocks, color):
         self.tetris = tetris
         for idx in range(len(blocks)):
             # записываем в self.blocks координаты всех блоков фигуры
@@ -106,7 +106,9 @@ class Figure:
             if tetris.board[row][col] == 1:
                 return
             tetris.board[row][col] = 1
+            tetris.colors[row][col] = color
         self.blocks = blocks
+        self.color = color
 
     def update_result(self):
         # функция обновления результата в таблице лидеров
@@ -224,19 +226,23 @@ class Figure:
         # копии
         blocks = deepcopy(self.blocks)
         board = deepcopy(tetris.board)
+        colors = deepcopy(tetris.colors)
 
         for idx in range(len(blocks)):
             row, col = blocks[idx]
             board[row][col] = 0  # опустошаем клетку
+            colors[row][col] = 0
             blocks[idx] = (row + 1, col)  # обновляем координаты блока фигуры
 
         for row, col in blocks:
             if board[row][col] == 1:
                 break  # если в новой позиции уже есть занятые клетки, break
             board[row][col] = 1
+            colors[row][col] = self.color
         else:
             self.blocks = blocks
             tetris.board = board
+            tetris.colors = colors
             return True
         return False
 
@@ -250,19 +256,23 @@ class Figure:
         # копии
         blocks = deepcopy(self.blocks)
         board = deepcopy(tetris.board)
+        colors = deepcopy(tetris.colors)
 
         for idx in range(len(blocks)):
             row, col = blocks[idx]
             board[row][col] = 0  # опустошаем клетку
+            colors[row][col] = 0
             blocks[idx] = (row, col - 1)  # обновляем координаты блока фигуры
 
         for row, col in blocks:
             if board[row][col] == 1:
                 break  # если в новой позиции уже есть занятые клетки, break
             board[row][col] = 1
+            colors[row][col] = self.color
         else:
             self.blocks = blocks
             tetris.board = board
+            tetris.colors = colors
             return True
         return False
 
@@ -275,19 +285,23 @@ class Figure:
 
         blocks = deepcopy(self.blocks)
         board = deepcopy(tetris.board)
+        colors = deepcopy(tetris.colors)
 
         for idx in range(len(blocks)):
             row, col = blocks[idx]
             board[row][col] = 0  # опустошаем клетку
+            colors[row][col] = 0
             blocks[idx] = (row, col + 1)  # обновляем координаты блока фигуры
 
         for row, col in blocks:
             if board[row][col] == 1:
                 break  # если в новой позиции уже есть занятые клетки, break
             board[row][col] = 1
+            colors[row][col] = self.color
         else:
             self.blocks = blocks
             tetris.board = board
+            tetris.colors = colors
             return True
         return False
 
@@ -309,6 +323,7 @@ class Figure:
 
         for block in self.blocks:
             tetris.board[block[0]][block[1]] = 0
+            tetris.colors[block[0]][block[1]] = 0
             m[block[0] - x_offset][block[1] - y_offset] = 1
 
         for i in range(5, 0, -1):
@@ -339,6 +354,7 @@ class Figure:
             for j in range(len(a)):
                 if a[i][j] == 1:
                     tetris.board[i + x_offset][j + y_offset] = 1
+                    tetris.colors[i + x_offset][j + y_offset] = self.color
                     new_blocks.append([i + x_offset, j + y_offset])
 
         self.blocks = new_blocks
@@ -350,80 +366,80 @@ class Figure:
 
 
 class Hero(Figure):
-    def __init__(self, tetris, position):
+    def __init__(self, tetris, position, color):
         blocks = [
             [0, 0],
             [0, 1],
             [0, 2],
             [0, 3]
         ]
-        super().__init__(tetris, position, blocks)
+        super().__init__(tetris, position, blocks, color)
 
 
 class Smashboy(Figure):
-    def __init__(self, tetris, position):
+    def __init__(self, tetris, position, color):
         blocks = [
             [0, 0],
             [0, 1],
             [1, 0],
             [1, 1]
         ]
-        super().__init__(tetris, position, blocks)
+        super().__init__(tetris, position, blocks, color)
 
 
 class Teewee(Figure):
-    def __init__(self, tetris, position):
+    def __init__(self, tetris, position, color):
         blocks = [
             [0, 1],
             [1, 0],
             [1, 1],
             [1, 2]
         ]
-        super().__init__(tetris, position, blocks)
+        super().__init__(tetris, position, blocks, color)
 
 
 class OrangeRicky(Figure):
-    def __init__(self, tetris, position):
+    def __init__(self, tetris, position, color):
         blocks = [
             [0, 2],
             [1, 0],
             [1, 1],
             [1, 2]
         ]
-        super().__init__(tetris, position, blocks)
+        super().__init__(tetris, position, blocks, color)
 
 
 class BlueRicky(Figure):
-    def __init__(self, tetris, position):
+    def __init__(self, tetris, position, color):
         blocks = [
             [0, 0],
             [1, 0],
             [1, 1],
             [1, 2]
         ]
-        super().__init__(tetris, position, blocks)
+        super().__init__(tetris, position, blocks, color)
 
 
 class Cleveland(Figure):
-    def __init__(self, tetris, position):
+    def __init__(self, tetris, position, color):
         blocks = [
             [0, 0],
             [0, 1],
             [1, 1],
             [1, 2]
         ]
-        super().__init__(tetris, position, blocks)
+        super().__init__(tetris, position, blocks, color)
 
 
 class RhodeIsland(Figure):
-    def __init__(self, tetris, position):
+    def __init__(self, tetris, position, color):
         blocks = [
             [0, 1],
             [0, 2],
             [1, 0],
             [1, 1]
         ]
-        super().__init__(tetris, position, blocks)
+        super().__init__(tetris, position, blocks, color)
 
 
 class Tetris:
@@ -436,12 +452,13 @@ class Tetris:
         self.cell_size = cell_size
         self.nickname = nickname
         self.score = 0
+        self.colors = [[0] * width for _ in range(height)]
 
     def add_figure(self, figure):
         # метод добавления фигуры на поле
 
         col = random.randint(3, self.width - 4)
-        self.current_figure = figure(self, (0, col))
+        self.current_figure = figure[0](self, (0, col), figure[1])
 
     def tick(self):
         # метод обработки одного тика игры
@@ -494,24 +511,39 @@ class Tetris:
                           (self.width * cs, self.height * cs)),
                          1)
 
+        b_group = pygame.sprite.Group()
+
         for row in range(self.height):
             for col in range(self.width):
                 if bool(self.board[row][col]):
-                    pygame.draw.rect(screen,
-                                     (255, 255, 255),
-                                     ((x + col * cs, y + row * cs),
-                                      (cs, cs)))
+                    print(self.board[row][col], self.colors[row][col])
+                    im = b_images[self.colors[row][col]]
+                    sp = pygame.sprite.Sprite()
+                    sp.image = im
+                    sp.rect = sp.image.get_rect()
+                    sp.rect.x = x + col * cs
+                    sp.rect.y = y + row * cs
+                    b_group.add(sp)
+
+        b_group.draw(screen)
 
 
-def figures_sequence(figures):
+def figures_sequence(figures, sprites):
     # функция последовательности случайных фигур
 
     figures_copy = figures[:]
+    sprites_copy = sprites[:]
+
     while True:
         figure = random.choice(figures_copy)
         figures_copy = figures[:]
         figures_copy.remove(figure)
-        yield figure
+
+        sprite = random.choice(sprites_copy)
+        sprites_copy = sprites[:]
+        sprites_copy.remove(sprite)
+
+        yield figure, sprite
 
 
 if __name__ == '__main__':
@@ -519,7 +551,13 @@ if __name__ == '__main__':
     INCREASED_SPEED = 30
     FIGURES = [Hero, Smashboy, Teewee, OrangeRicky,
                BlueRicky, Cleveland, RhodeIsland]
-    FIGURES_SEQUENCE = figures_sequence(FIGURES)
+    # загрузка спрайтов
+    b_images = []
+    for i in range(1, 8):
+        im = pygame.image.load(f'data/Block{i}.png')
+        b_images.append(im)
+
+    FIGURES_SEQUENCE = figures_sequence(FIGURES, [i for i in range(7)])
 
     con = sqlite3.connect('database.sqlite')
     cur = con.cursor()
