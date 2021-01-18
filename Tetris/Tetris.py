@@ -255,8 +255,7 @@ class Figure:
     def move_left(self):
         # функция перемещения фигуры влево
 
-        if self.get_most_down() + 1 >= self.tetris.height or \
-                self.get_most_left() <= 0:
+        if self.get_most_left() <= 0:
             return False  # если новые координаты выходят за границы
 
         # копии
@@ -285,8 +284,7 @@ class Figure:
     def move_right(self):
         # функция перемещения фигуры вправо
 
-        if self.get_most_down() + 1 >= self.tetris.height or \
-                self.get_most_right() + 1 >= self.tetris.width:
+        if self.get_most_right() + 1 >= self.tetris.width:
             return False  # если новые координаты выходят за границы
 
         blocks = deepcopy(self.blocks)
@@ -481,14 +479,6 @@ class Tetris:
 
         figure = self.current_figure
         if figure is None:
-            self.add_figure(next_figure) # Если на поле нет фигуры, добавляем
-            next_figure = next(FIGURES_SEQUENCE)
-        else:
-            if figure.get_most_down() == self.height: # если фигура в самом низу
-                self.current_figure = None
-            elif figure.move_down() == False:
-                self.current_figure = None
-
             cnt = 0
             board = deepcopy(self.board)
             i = self.height - 1
@@ -514,6 +504,14 @@ class Tetris:
                 self.score += 500
             elif cnt == 4:
                 self.score += 1000
+
+            self.add_figure(next_figure) # Если на поле нет фигуры, добавляем
+            next_figure = next(FIGURES_SEQUENCE)
+        else:
+            if figure.get_most_down() == self.height: # если фигура в самом низу
+                self.current_figure = None
+            elif figure.move_down() == False:
+                self.current_figure = None
 
     def render(self, screen):
         # метод для рендеринга поля на экран
